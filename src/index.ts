@@ -1,15 +1,24 @@
-import express from 'express';
-import fs from 'fs';
-import path from 'path';
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors');
+
 import { CustomRoute } from './types';
 
-const app = express();
+require('dotenv').config()
+
+var app = express()
+
+app.use(cors({
+  origin: 'null',
+  methods: ['OPTIONS'],
+}));
 
 // Define the folder containing your route files
 const routesFolder = path.join(__dirname, 'routes');
 
 // Read all files in the routes folder
-fs.readdirSync(routesFolder).forEach((file) => {
+fs.readdirSync(routesFolder).forEach((file: any) => {
   const filePath = path.join(routesFolder, file);
 
   // Import the default export from each file
@@ -20,6 +29,8 @@ fs.readdirSync(routesFolder).forEach((file) => {
   // Set up the route using app.use
   app.use(routePath, router);
 });
+
+app.use(express.json());
 
 // Start your Express.js server
 const port = process.env.PORT || 3000;
